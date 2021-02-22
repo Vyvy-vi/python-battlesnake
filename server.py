@@ -1,5 +1,10 @@
 import os
 import random
+import math
+import json
+
+from consts import *
+from logic import *
 
 import cherrypy
 
@@ -7,6 +12,9 @@ import cherrypy
 This is a simple Battlesnake server written in Python.
 For instructions see https://github.com/BattlesnakeOfficial/starter-snake-python/README.md
 """
+snake_name = 'ace'
+
+VIEW_SQUARE_DIMENSIONS = [5, 5] #dimensions for the immediate surroundings that the snake looks at.
 
 
 class Battlesnake(object):
@@ -18,10 +26,10 @@ class Battlesnake(object):
         # TIP: If you open your Battlesnake URL in browser you should see this data
         return {
             "apiversion": "1",
-            "author": "",  # TODO: Your Battlesnake Username
-            "color": "#888888",  # TODO: Personalize
-            "head": "default",  # TODO: Personalize
-            "tail": "default",  # TODO: Personalize
+            "author": "Vyvy-vi",
+            "color": "#BCD0C7",
+            "head": "silly",
+            "tail": "bolt",
         }
 
     @cherrypy.expose
@@ -30,7 +38,6 @@ class Battlesnake(object):
         # This function is called everytime your snake is entered into a game.
         # cherrypy.request.json contains information about the game that's about to be played.
         data = cherrypy.request.json
-
         print("START")
         return "ok"
 
@@ -38,17 +45,13 @@ class Battlesnake(object):
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
     def move(self):
-        # This function is called on every turn of a game. It's how your snake decides where to move.
-        # Valid moves are "up", "down", "left", or "right".
+     # This function is called on every turn of a game. It's how your snake decides where to move.
+        # Valid moves are 'up', 'down', 'left', or 'right'.
         # TODO: Use the information in cherrypy.request.json to decide your next move.
         data = cherrypy.request.json
-
-        # Choose a random direction to move in
-        possible_moves = ["up", "down", "left", "right"]
-        move = random.choice(possible_moves)
-
-        print(f"MOVE: {move}")
-        return {"move": move}
+        vars = Variables(data)
+        board = data['board']
+        return best_move(vars)
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -69,3 +72,5 @@ if __name__ == "__main__":
     )
     print("Starting Battlesnake Server...")
     cherrypy.quickstart(server)
+
+# up down right left 
